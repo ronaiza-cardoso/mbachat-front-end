@@ -1,22 +1,46 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
+import { Facebook, NativeStorage } from 'ionic-native';
 
-/*
-  Generated class for the Login page.
+import { ChatPage } from '../chat/chat';
 
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
-*/
 @Component({
   selector: 'page-login',
   templateUrl: 'login.html'
 })
 export class LoginPage {
+   FB_APP_ID: number = 253413051773935;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {}
-
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad LoginPage');
+  constructor(public navCtrl: NavController, public navParams: NavParams) {
+    Facebook.browserInit(this.FB_APP_ID, 'v2.8');
   }
 
+  doFbLogin() {
+    let permissions = new Array();
+    const nav = this.navCtrl;
+
+    permissions = ['public_profile'];
+
+    Facebook.login(permissions)
+      .then(response => {
+        let userId = response.authResponse.userID;
+        let params = new Array();
+
+        Facebook.api('/me?fields=name', params)
+          .then(user => {
+
+            NativeStorage.setItem('user',
+            { name: user.name })
+            .then(() => {
+              nav.push(ChatPage);
+            }, error => {
+              console.log(error);
+            })
+
+          })
+      }, error => {
+        console.log(error);
+      });
+
+  }
 }
