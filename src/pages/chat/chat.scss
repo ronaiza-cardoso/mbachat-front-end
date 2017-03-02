@@ -1,3 +1,38 @@
 page-chat {
+  .message {
+    padding: 0;
+    margin: 0;
+  }
 
+  .item {
+    background: #FAFAFA;
+    margin: 1em 0;
+    border-radius: 0.5em;
+    box-shadow: 1px 1px 1px #EEE;
+    padding: 0 1.2em;
+  }
+
+  .item p {
+    font-size: 1em;
+  }
+
+  .name {
+    color: $app;
+    display: block;
+    padding-bottom: 0.5em;
+  }
+
+  .info {
+    font-size: 0.8em;
+    padding: 0; margin: 0;
+    text-align: right;
+    color:#CCC;
+  }
+
+  .join {
+    font-size: 0.8em;
+    padding: 0; margin: 0;
+    text-align: center;
+    color:#a7a7a7;
+  }
 }

@@ -1,22 +1,81 @@
-import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { Component, NgZone } from '@angular/core';
+import { NavController } from 'ionic-angular';
+import { Facebook, NativeStorage } from 'ionic-native';
 
-/*
-  Generated class for the Chat page.
+import { ChatMessage } from '../../models/chat-message';
+import { ServiceChat } from '../../providers/service-chat';
+import { LoginPage } from '../login/login';
 
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
-*/
 @Component({
   selector: 'page-chat',
   templateUrl: 'chat.html'
 })
 export class ChatPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {}
+  messages: any;
+  zone: NgZone;
+  chatBox: string;
+  user: any;
+  userReady: boolean = false;
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad ChatPage');
+  constructor(public navCtrl: NavController, public socket: ServiceChat, public ngzone: NgZone) {
+    this.zone = ngzone;
+    this.messages = [];
+    this.chatBox = "";
+    this.socket.socketService.subscribe(event => {
+    console.log('message received from server: ', event);
+      if (event.category === 'message'){
+        console.log(event);
+        this.zone.run(() => {
+          this.messages.push(event.message);
+        });
+      }
+    }); //end of subscribe
+  }
+
+  ionViewCanEnter(){
+    let env = this;
+    NativeStorage.getItem('user')
+    .then(data => {
+      env.user = { name: data.name }
+        env.userReady = true;
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  formatMessage(msg: string) {
+    if (msg) {
+      const data = new Date();
+      const chatMessage: ChatMessage = {
+        from: this.user.name,
+        msg: msg,
+        created: data
+      };
+      return chatMessage;
+    }
+    return null;
+  }
+
+
+  send(message) {
+      const newMsg = this.formatMessage(message);
+      if (newMsg) {
+        this.socket.sendMessage(newMsg);
+      }
+      this.chatBox = '';
+  }
+
+  doFbLogout(){
+    let nav = this.navCtrl;
+
+    Facebook.logout()
+      .then(response => {
+        NativeStorage.remove('user');
+        nav.push(LoginPage);
+      }, error => {
+        console.log(error);
+      });
   }
 
 }
