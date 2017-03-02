@@ -5,6 +5,7 @@ import { HomePage } from '../pages/home/home';
 
 import { LoginPage } from '../pages/login/login';
 import { ChatPage } from './../pages/chat/chat';
+import { ServiceChat } from './../providers/service-chat';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,6 @@ import { ChatPage } from './../pages/chat/chat';
     ChatPage,
     LoginPage
   ],
-  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}]
+  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, ServiceChat]
 })
 export class AppModule {}
