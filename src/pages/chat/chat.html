@@ -1,36 +1,36 @@
 <ion-header>
-  <ion-toolbar color="mobi">
-    <ion-title>Chat</ion-title>
+  <ion-toolbar color="mobi" class="messages-page-navbar">
+
+    <ion-title class="title">MBAChat</ion-title>
+
     <ion-buttons end>
-      <button ion-button (click)="doFbLogout()">
-         Logout
-      </button>
+      <button ion-button icon-only class="options-button" (click)="doFbLogout()"><ion-icon name="log-out"></ion-icon></button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
+<ion-content padding class="messages-page-content">
+    <div *ngFor="let message of messages">
+      <div class="message">
+          <div class="message-name">{{message.from}}</div>
+           <div class="message-content">{{message.msg}}</div> 
 
-<ion-content padding>
+          <span class="message-timestamp">{{ message.created | date:'HH:mm' }}</span>
+      </div>
 
-<div class="message" *ngFor="let message of messages">
-  <div class="item">
-      <p class="name">{{message.from}}</p>
-      <p class="msg">{{message.msg}}</p>
-    <p class="info">{{message.created | date:'MMM d, y HH:mm'}}</p>
-  </div>
-</div>
-
+    </div>
 </ion-content>
 
 <ion-footer>
-  <ion-row>
-      <ion-col width-75>
-        <ion-input [(ngModel)]="chatBox" placeholder="Type a message"></ion-input>
-      </ion-col>
-      <ion-col width-25 text-right>
-        <button ion-button icon-only color="app" clear (click)="send(chatBox)">
-          <ion-icon md="md-send"></ion-icon>
-        </button>
-      </ion-col>
-  </ion-row>
+  <ion-toolbar color="mobi" class="messages-page-footer" position="bottom">
+    <ion-textarea [(ngModel)]="chatBox"  (keypress)="onInputKeypress($event)" class="message-editor" placeholder="Type a message"></ion-textarea>
+
+    <ion-buttons end>
+
+      <button ion-button icon-only class="message-editor-button" (click)="send(chatBox)">
+        <ion-icon name="send"></ion-icon>
+      </button>
+
+    </ion-buttons>
+  </ion-toolbar>
 </ion-footer>
