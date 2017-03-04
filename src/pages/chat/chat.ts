@@ -22,18 +22,27 @@ export class ChatPage {
     this.zone = ngzone;
     this.messages = [];
     this.chatBox = "";
+
     this.socket.socketService.subscribe(event => {
-    console.log('message received from server: ', event);
-      if (event.category === 'message'){
-        console.log(event);
-        this.zone.run(() => {
-          this.messages.push(event.message);
-        });
+      switch (event.category) {
+        case 'listMessages':
+          this.zone.run(() => {
+            this.messages = event.message;
+          });
+          break;
+        case 'message':
+          this.zone.run(() => {
+            this.messages.push(event.message);
+          });
+          break;
       }
-    }); //end of subscribe
+    });
+
   }
 
-  ionViewCanEnter(){
+
+
+  ionViewCanEnter(): void {
     let env = this;
     NativeStorage.getItem('user')
     .then(data => {
@@ -57,6 +66,12 @@ export class ChatPage {
     return null;
   }
 
+  onInputKeypress(e) {
+    if (e.keyCode === 13) {
+      this.send(e.target.value);
+    }
+  }
+
 
   send(message) {
       const newMsg = this.formatMessage(message);
@@ -66,7 +81,7 @@ export class ChatPage {
       this.chatBox = '';
   }
 
-  doFbLogout(){
+  doFbLogout(): void {
     let nav = this.navCtrl;
 
     Facebook.logout()
