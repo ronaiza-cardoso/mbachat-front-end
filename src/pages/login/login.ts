@@ -23,7 +23,6 @@ export class LoginPage {
 
     Facebook.login(permissions)
       .then(response => {
-        let userId = response.authResponse.userID;
         let params = new Array();
 
         Facebook.api('/me?fields=name', params)
