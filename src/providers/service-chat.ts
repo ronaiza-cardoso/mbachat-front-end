@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import * as io from 'socket.io-client';
 
@@ -12,7 +11,8 @@ export class ServiceChat {
   socket: any;
   user: any;
   data: any = null;
-  socketHost: string = 'https://mba-chat.herokuapp.com/';
+  // socketHost: string = 'https://mba-chat.herokuapp.com/';
+  socketHost: string = 'http://192.168.0.10:3000/';
 
   constructor() {
     this.socketService = Observable.create(observer => {
@@ -24,31 +24,18 @@ export class ServiceChat {
   initialize(){
     this.socket = io(this.socketHost);
 
-    this.socket.on('connect', (msg) => {
+    this.socket.on('connect', msg => {
       console.log('on connect');
       this.socketObserver.next({ category: 'connect', message: 'user connected'});
     });
 
-    this.socket.on('reconnecting', (msg) => {
-      console.log('on reconnecting');
+    this.socket.on('listMessages', msg => {
+      this.socketObserver.next({ category: 'listMessages', message: msg });
     });
 
-    this.socket.on('reconnect_error', (msg) => {
-      console.log('on reconnect_error');
-    });
-
-    this.socket.on('reconnect_failed', (msg) => {
-      console.log('on reconnect_failed');
-    });
-
-     this.socket.on('disconnect', () => {
-      console.log('user disconnected');
-      // io.emit('user disconnected');
-    });
-
-    this.socket.on('message', (msg) => {
+    this.socket.on('message', msg => {
       this.socketObserver.next({ category: 'message', message: msg });
-    }); //end of socket.on('message')
+    });
 
   }
 
